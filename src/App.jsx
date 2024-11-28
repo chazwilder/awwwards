@@ -3,6 +3,7 @@ import About from "./components/About.jsx";
 import NavBar from "./components/NavBar.jsx";
 import Features from "./components/Features.jsx";
 import Contact from "./components/Contact.jsx";
+import Footer from "./components/Footer.jsx";
 
 const App = () => {
     return (
@@ -12,6 +13,7 @@ const App = () => {
             <About />
             <Features />
             <Contact />
+            <Footer />
         </main>
     )
 }
