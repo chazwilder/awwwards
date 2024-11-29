@@ -11,11 +11,10 @@ const Hero = () => {
     const [currentIndex, setCurrentIndex] = useState(1);
     const [hasClicked, setHasClicked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [loadedVideo, setLoadedVideo] = useState(0);
+    const loadedVideosRef = useRef(new Set());
 
     const totalVideos = 4;
     const nextVideoRef = useRef(null);
-
     const upcomingVideoIndex = (currentIndex % totalVideos) + 1;
 
     const handleMiniVdClick = () => {
@@ -26,35 +25,41 @@ const Hero = () => {
     const getVideoSrc = (index) => `/awwwards/videos/hero-${index}.mp4`;
 
     const handleVideoLoad = () => {
-        setLoadedVideo((prev) => prev + 1);
+        loadedVideosRef.current.add(1);
+        // Check if we have loaded at least the first video
+        if (loadedVideosRef.current.size >= 1) {
+            setIsLoading(false);
+        }
     }
 
+    // Safety timeout to prevent infinite loading
     useEffect(() => {
-    if (loadedVideo === totalVideos - 1) {
-        setIsLoading(false);
-    }
-    }, [loadedVideo]);
+        const timeout = setTimeout(() => {
+            setIsLoading(false);
+        }, 5000); // 5 seconds timeout
+
+        return () => clearTimeout(timeout);
+    }, []);
 
     useGSAP(() => {
-    if (hasClicked) {
-        gsap.set('#next-video', {visibility: 'visible'});
-        gsap.to('#next-video',{
-            transformOrigin: 'center center',
-            scale: 1,
-            width: '100%',
-            height: '100%',
-            duration: 1,
-            ease: 'power1.inOut',
-            onStart: ()=> nextVideoRef.current.play(),
-        })
-        gsap.from('#current-video', {
-            transformOrigin: 'center center',
-            scale: 0,
-            duration: 1.5,
-            ease: 'power1.inOut',
-
-        })
-    }
+        if (hasClicked) {
+            gsap.set('#next-video', {visibility: 'visible'});
+            gsap.to('#next-video',{
+                transformOrigin: 'center center',
+                scale: 1,
+                width: '100%',
+                height: '100%',
+                duration: 1,
+                ease: 'power1.inOut',
+                onStart: ()=> nextVideoRef.current?.play(),
+            })
+            gsap.from('#current-video', {
+                transformOrigin: 'center center',
+                scale: 0,
+                duration: 1.5,
+                ease: 'power1.inOut',
+            })
+        }
     },{dependencies: [currentIndex], revertOnUpdate:true})
 
     useGSAP(() => {
@@ -94,12 +99,17 @@ const Hero = () => {
                         className="mask-clip-path absolute-center absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg">
                         <div onClick={handleMiniVdClick}
                              className="origin-center scale-50 opacity-0 transition-all duration-500 ease-in hover:scale-100 hover:opacity-100">
-                            <video ref={nextVideoRef} src={getVideoSrc(upcomingVideoIndex)}
-                                   loop={true}
-                                   muted
-                                   id="current-video"
-                                   className="size-64 origin-center scale-150 object-cover object-center"
-                                   onLoadedData={handleVideoLoad}
+                            <video
+                                ref={nextVideoRef}
+                                src={getVideoSrc(upcomingVideoIndex)}
+                                loop={true}
+                                muted
+                                playsInline
+                                preload="auto"
+                                id="current-video"
+                                className="size-64 origin-center scale-150 object-cover object-center"
+                                onLoadedData={handleVideoLoad}
+                                onError={() => setIsLoading(false)} // Handle load errors
                             />
                         </div>
                     </div>
@@ -109,17 +119,23 @@ const Hero = () => {
                         src={getVideoSrc(currentIndex)}
                         loop
                         muted
+                        playsInline
+                        preload="auto"
                         id="next-video"
                         className="absolute-center invisible absolute z-20 size-64 object-center object-cover"
                         onLoadedData={handleVideoLoad}
+                        onError={() => setIsLoading(false)} // Handle load errors
                     />
                     <video
                         src={getVideoSrc(currentIndex === totalVideos - 1 ? 1 : currentIndex)}
                         loop
                         autoPlay
                         muted
+                        playsInline
+                        preload="auto"
                         className="absolute left-0 top-0 size-full object-cover object-center"
                         onLoadedData={handleVideoLoad}
+                        onError={() => setIsLoading(false)} // Handle load errors
                     />
                 </div>
                 {/* Hero Header */}
@@ -136,8 +152,12 @@ const Hero = () => {
                             Enter The Metagame Layer <br/>
                             Unleash the Play Economy
                         </p>
-                        <Button id="watch-trailer" title="Watch Trailer" leftIcon={<TiLocationArrow/>}
-                                containerClass="!bg-yellow-300 flex-center gap-1"/>
+                        <Button
+                            id="watch-trailer"
+                            title="Watch Trailer"
+                            leftIcon={<TiLocationArrow/>}
+                            containerClass="!bg-yellow-300 flex-center gap-1"
+                        />
                     </div>
                 </div>
             </div>
@@ -148,4 +168,5 @@ const Hero = () => {
         </div>
     )
 }
+
 export default Hero
