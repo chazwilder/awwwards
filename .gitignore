@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+note.py
+personal_blog.txt
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

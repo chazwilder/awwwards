@@ -1,21 +1,25 @@
-FROM node:18-alpine
+# Dockerfile
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies with legacy peer deps
+# Install dependencies
 RUN npm install
 
-# Copy rest of the application
+# Copy project files
 COPY . .
 
-# Build the Next.js application
+# Build the project
 RUN npm run build
 
-# Expose port 8000
-EXPOSE 8000
+# Install serve to run the built project
+RUN npm install -g serve
 
-# Start the application
-CMD ["npm", "start", "--", "-p", "8000"]
+# Expose port
+EXPOSE 8001
+
+# Start the server
+CMD ["serve", "-s", "dist", "-l", "8001"]
