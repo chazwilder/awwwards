@@ -1,38 +1,39 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
   base: '/awwwards/',
+  publicDir: 'public',
   build: {
+    outDir: 'dist',
     assetsDir: 'assets',
-    // Ensure assets are copied correctly
-    copyPublicDir: true,
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
       output: {
         assetFileNames: (assetInfo) => {
-          // Keep images in their original directory structure
-          if (assetInfo.name.endsWith('.png') ||
-              assetInfo.name.endsWith('.jpg') ||
-              assetInfo.name.endsWith('.webp') ||
-              assetInfo.name.endsWith('.svg')) {
-            return 'images/[name]-[hash][extname]'
+          // Keep the original directory structure for images
+          const info = assetInfo.name.split('.')
+          const extType = info[info.length - 1]
+          if (/\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(assetInfo.name)) {
+            return `videos/[name]-[hash][extname]`
           }
-          return 'assets/[name]-[hash][extname]'
+          if (/\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/i.test(assetInfo.name)) {
+            return `img/[name]-[hash][extname]`
+          }
+          return `assets/[name]-[hash][extname]`
         },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-      },
-    },
+      }
+    }
   },
   preview: {
     port: 8001,
-    host: true,
     strictPort: true,
-    cors: true,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    }
+    host: true,
+    cors: true
   },
   server: {
     port: 8001,

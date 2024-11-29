@@ -23,7 +23,7 @@ const Hero = () => {
         setCurrentIndex(upcomingVideoIndex);
     }
 
-    const getVideoSrc = (index) => `videos/hero-${index}.mp4`;
+    const getVideoSrc = (index) => `/awwwards/videos/hero-${index}.mp4`;
 
     const handleVideoLoad = () => {
         setLoadedVideo((prev) => prev + 1);

@@ -4,7 +4,7 @@ import fnmatch
 # Hardcoded values
 ROOT_DIR = "."
 OUTPUT_FILE = "personal_blog.txt"
-EXCLUDE_PATTERNS = ["*target", "*git", "*idea", "*output", "*node_modules", "*next","*instrumentation.ts", "sentry.client.config.ts","*sentry*"]
+EXCLUDE_PATTERNS = ["*target", "*git", "*idea", "*output", "*node_modules", "*next","*instrumentation.ts", "sentry.client.config.ts","*sentry*","*dist"]
 FILE_EXTENSIONS = (".rs", ".toml", ".yaml", ".js", ".ts", ".tsx", ".jsx")
 
 
