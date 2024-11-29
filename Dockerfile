@@ -14,4 +14,4 @@ RUN npm run build
 
 EXPOSE 8001
 
-CMD [ "serve", "-s", "dist" ]
+CMD [ "npm", "run", "preview" ]
