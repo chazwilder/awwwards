@@ -16,10 +16,8 @@ COPY . .
 RUN npm run build
 
 # Install serve to run the built project
-RUN npm install -g serve
-
 # Expose port
 EXPOSE 8001
 
 # Start the server
-CMD ["serve", "-s", "dist", "-l", "8001"]
+CMD ["npm", "run", "preview"]
